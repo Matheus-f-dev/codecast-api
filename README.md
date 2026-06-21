@@ -418,6 +418,8 @@ Coverage: 99%
 ## Frontend
 
 Interface web para interagir com a API sem precisar do Swagger.
+Apresneta uns erros ainda
+
 
 ### Como executar
 
