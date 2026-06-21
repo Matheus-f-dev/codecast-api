@@ -359,7 +359,202 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   Estados de loading e vazio
+   Studios — Grid de cards
+───────────────────────────────────────────────────────────────────────── */
+.studios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* Card de estúdio */
+.studio-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  animation: card-in 0.3s ease both;
+}
+
+.studio-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(108, 99, 255, 0.15);
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Atraso escalonado para os cards entrarem em sequência */
+.studio-card:nth-child(1) { animation-delay: 0ms; }
+.studio-card:nth-child(2) { animation-delay: 60ms; }
+.studio-card:nth-child(3) { animation-delay: 120ms; }
+.studio-card:nth-child(4) { animation-delay: 180ms; }
+.studio-card:nth-child(5) { animation-delay: 240ms; }
+.studio-card:nth-child(6) { animation-delay: 300ms; }
+
+/* Cabeçalho do card: ícone + nome */
+.studio-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.studio-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: rgba(108, 99, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.studio-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Linha de capacidade */
+.studio-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.studio-card__meta svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.studio-card__capacity-bar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--color-border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.studio-card__capacity-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), #a78bfa);
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* Divisor */
+.studio-card__divider {
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+/* Equipamentos */
+.studio-card__equip-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-2);
+}
+
+.studio-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.studio-card__no-equip {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Skeleton loading
+───────────────────────────────────────────────────────────────────────── */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+.skeleton-card {
+  height: 220px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-surface-2) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border: 1px solid var(--color-border);
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Feedback box (erro / vazio)
+───────────────────────────────────────────────────────────────────────── */
+.studios-feedback { width: 100%; }
+
+.feedback-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.feedback-box--error {
+  border-color: rgba(224, 82, 82, 0.35);
+  background-color: rgba(224, 82, 82, 0.05);
+}
+
+.feedback-box__icon { font-size: 2rem; }
+
+.feedback-box__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.feedback-box__desc {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 320px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Botão sm
+───────────────────────────────────────────────────────────────────────── */
+.btn--sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  gap: var(--space-1);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Estados de loading e vazio (demais seções)
 ───────────────────────────────────────────────────────────────────────── */
 .loading-state,
 .empty-state {

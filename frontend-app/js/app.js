@@ -123,151 +123,93 @@ function initNavigation() {
    Estúdios
 ───────────────────────────────────────────────────────────────────────── */
 
-/** Renderiza a tabela de estúdios com base em state.studios. */
-function renderStudios() {
-  const tbody = document.getElementById('studios-tbody');
-  tbody.innerHTML = '';
+/**
+ * Define qual bloco da seção de estúdios está visível.
+ * @param {'loading'|'error'|'empty'|'grid'} state
+ */
+function setStudiosState(show) {
+  document.getElementById('studios-loading').classList.toggle('hidden', show !== 'loading');
+  document.getElementById('studios-error').classList.toggle('hidden',   show !== 'error');
+  document.getElementById('studios-empty').classList.toggle('hidden',   show !== 'empty');
+  document.getElementById('studios-grid').classList.toggle('hidden',    show !== 'grid');
+}
 
+/**
+ * Gera o HTML de um card de estúdio.
+ * A barra de capacidade usa um máximo de referência de 20 pessoas.
+ */
+function buildStudioCard(studio) {
+  const MAX_CAP = 20;
+  const fillPct = Math.min((studio.capacidade / MAX_CAP) * 100, 100);
+
+  const tagsHtml = (studio.equipamentos || []).length
+    ? studio.equipamentos.map(e => `<span class="tag">${e}</span>`).join('')
+    : '<span class="studio-card__no-equip">Nenhum equipamento cadastrado</span>';
+
+  const card = document.createElement('article');
+  card.className = 'studio-card';
+  card.innerHTML = `
+    <div class="studio-card__header">
+      <div class="studio-card__icon">🎧</div>
+      <h2 class="studio-card__name">${studio.nome}</h2>
+    </div>
+
+    <div class="studio-card__meta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span>${studio.capacidade} pessoa${studio.capacidade !== 1 ? 's' : ''}</span>
+      <div class="studio-card__capacity-bar">
+        <div class="studio-card__capacity-fill" style="width: ${fillPct}%"></div>
+      </div>
+    </div>
+
+    <div class="studio-card__divider"></div>
+
+    <div>
+      <p class="studio-card__equip-label">Equipamentos</p>
+      <div class="studio-card__tags">${tagsHtml}</div>
+    </div>
+  `;
+  return card;
+}
+
+/** Renderiza os cards de estúdios com base em state.studios. */
+function renderStudios() {
   if (state.studios.length === 0) {
-    setTableState('studios', 'empty');
+    setStudiosState('empty');
     return;
   }
 
-  setTableState('studios', 'table');
-
-  state.studios.forEach(studio => {
-    const tags = (studio.equipamentos || [])
-      .map(e => `<span class="tag">${e}</span>`)
-      .join('') || '—';
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${studio.id}</td>
-      <td>${studio.nome}</td>
-      <td>${studio.capacidade}</td>
-      <td>${tags}</td>
-      <td>
-        <button class="btn btn--icon" data-action="edit-studio" data-id="${studio.id}" title="Editar">✏️</button>
-        <button class="btn btn--icon" data-action="delete-studio" data-id="${studio.id}" title="Remover">🗑️</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const grid = document.getElementById('studios-grid');
+  grid.innerHTML = '';
+  state.studios.forEach(studio => grid.appendChild(buildStudioCard(studio)));
+  setStudiosState('grid');
 }
 
-/** Busca os estúdios na API e atualiza o estado e a UI. */
+/** Busca os estúdios na API, atualiza o estado e renderiza. */
 async function loadStudios() {
-  setTableState('studios', 'loading');
+  setStudiosState('loading');
   try {
     state.studios = await StudiosAPI.getAll();
     renderStudios();
   } catch (err) {
-    setTableState('studios', 'empty');
-    showToast(err.message, 'error');
+    // Exibe o estado de erro com a mensagem retornada pela API (ou rede)
+    document.getElementById('studios-error-msg').textContent = err.message;
+    setStudiosState('error');
   }
 }
 
-/** Abre o formulário de estúdio para criação. */
-function openStudioFormCreate() {
-  state.editingStudioId = null;
-  document.getElementById('form-studio-title').textContent = 'Novo estúdio';
-  document.getElementById('studio-form').reset();
-  clearFieldErrors(document.getElementById('studio-form'));
-  document.getElementById('form-studio').classList.remove('hidden');
-}
-
-/** Abre o formulário de estúdio pré-preenchido para edição. */
-function openStudioFormEdit(id) {
-  const studio = state.studios.find(s => s.id === id);
-  if (!studio) return;
-
-  state.editingStudioId = id;
-  document.getElementById('form-studio-title').textContent = 'Editar estúdio';
-  document.getElementById('studio-nome').value = studio.nome;
-  document.getElementById('studio-capacidade').value = studio.capacidade;
-  document.getElementById('studio-equipamentos').value = (studio.equipamentos || []).join(', ');
-  clearFieldErrors(document.getElementById('studio-form'));
-  document.getElementById('form-studio').classList.remove('hidden');
-}
-
-function closeStudioForm() {
-  document.getElementById('form-studio').classList.add('hidden');
-  state.editingStudioId = null;
-}
-
-/** Coleta e valida os dados do formulário de estúdio. */
-function getStudioFormData() {
-  const nome       = document.getElementById('studio-nome').value.trim();
-  const capacidade = parseInt(document.getElementById('studio-capacidade').value, 10);
-  const equip      = document.getElementById('studio-equipamentos').value;
-  const equipamentos = equip ? equip.split(',').map(e => e.trim()).filter(Boolean) : [];
-
-  let valid = true;
-  clearFieldErrors(document.getElementById('studio-form'));
-
-  if (nome.length < 2) {
-    setFieldError('err-studio-nome', 'O nome deve ter pelo menos 2 caracteres.');
-    valid = false;
-  }
-  if (!capacidade || capacidade < 1) {
-    setFieldError('err-studio-capacidade', 'Informe uma capacidade maior que zero.');
-    valid = false;
-  }
-
-  return valid ? { nome, capacidade, equipamentos } : null;
-}
-
+/** Registra os handlers da seção de estúdios. */
 function initStudiosHandlers() {
-  // Botão "Novo estúdio"
-  document.getElementById('btn-new-studio').addEventListener('click', openStudioFormCreate);
+  // Botão "Atualizar" no cabeçalho da seção
+  document.getElementById('btn-refresh-studios').addEventListener('click', loadStudios);
 
-  // Botão "Cancelar" no formulário
-  document.getElementById('btn-cancel-studio').addEventListener('click', closeStudioForm);
-
-  // Submit do formulário
-  document.getElementById('studio-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const payload = getStudioFormData();
-    if (!payload) return;
-
-    try {
-      if (state.editingStudioId) {
-        await StudiosAPI.update(state.editingStudioId, payload);
-        showToast('Estúdio atualizado!', 'success');
-      } else {
-        await StudiosAPI.create(payload);
-        showToast('Estúdio criado!', 'success');
-      }
-      closeStudioForm();
-      loadStudios();
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
-  });
-
-  // Delegação de eventos na tabela (editar / remover)
-  document.getElementById('studios-tbody').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-
-    const id = parseInt(btn.dataset.id, 10);
-
-    if (btn.dataset.action === 'edit-studio') {
-      openStudioFormEdit(id);
-    }
-
-    if (btn.dataset.action === 'delete-studio') {
-      openConfirmModal(async () => {
-        try {
-          await StudiosAPI.remove(id);
-          showToast('Estúdio removido.', 'success');
-          loadStudios();
-        } catch (err) {
-          showToast(err.message, 'error');
-        }
-      });
-    }
-  });
+  // Botão "Tentar novamente" no estado de erro
+  document.getElementById('btn-retry-studios').addEventListener('click', loadStudios);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

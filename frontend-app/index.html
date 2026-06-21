@@ -31,51 +31,42 @@
 
         <div class="section__header">
           <h1 class="section__title">Estúdios</h1>
-          <button class="btn btn--primary" id="btn-new-studio">+ Novo estúdio</button>
+          <button class="btn btn--ghost btn--sm" id="btn-refresh-studios" title="Recarregar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Atualizar
+          </button>
         </div>
 
-        <!-- Formulário de criação/edição (oculto por padrão) -->
-        <div id="form-studio" class="card form-card hidden">
-          <h2 class="form-card__title" id="form-studio-title">Novo estúdio</h2>
-          <form id="studio-form" novalidate>
-            <div class="form-group">
-              <label for="studio-nome">Nome</label>
-              <input type="text" id="studio-nome" name="nome" placeholder="Ex: Estúdio A" required />
-              <span class="field-error" id="err-studio-nome"></span>
-            </div>
-            <div class="form-group">
-              <label for="studio-capacidade">Capacidade</label>
-              <input type="number" id="studio-capacidade" name="capacidade" min="1" placeholder="Ex: 5" required />
-              <span class="field-error" id="err-studio-capacidade"></span>
-            </div>
-            <div class="form-group">
-              <label for="studio-equipamentos">Equipamentos <small>(separados por vírgula)</small></label>
-              <input type="text" id="studio-equipamentos" name="equipamentos" placeholder="Ex: Microfone, Mesa de Som" />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn--primary">Salvar</button>
-              <button type="button" class="btn btn--ghost" id="btn-cancel-studio">Cancelar</button>
-            </div>
-          </form>
+        <!-- Estado: carregando -->
+        <div id="studios-loading" class="studios-feedback">
+          <div class="skeleton-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
         </div>
 
-        <!-- Tabela de estúdios -->
-        <div class="card">
-          <div id="studios-loading" class="loading-state">Carregando...</div>
-          <div id="studios-empty" class="empty-state hidden">Nenhum estúdio cadastrado.</div>
-          <table id="studios-table" class="table hidden">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nome</th>
-                <th>Capacidade</th>
-                <th>Equipamentos</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="studios-tbody"></tbody>
-          </table>
+        <!-- Estado: erro de conexão -->
+        <div id="studios-error" class="studios-feedback hidden">
+          <div class="feedback-box feedback-box--error">
+            <span class="feedback-box__icon">⚠️</span>
+            <p class="feedback-box__title">Não foi possível carregar os estúdios</p>
+            <p class="feedback-box__desc" id="studios-error-msg"></p>
+            <button class="btn btn--primary" id="btn-retry-studios">Tentar novamente</button>
+          </div>
         </div>
+
+        <!-- Estado: lista vazia -->
+        <div id="studios-empty" class="studios-feedback hidden">
+          <div class="feedback-box">
+            <span class="feedback-box__icon">🎙️</span>
+            <p class="feedback-box__title">Nenhum estúdio cadastrado</p>
+            <p class="feedback-box__desc">Os estúdios cadastrados na API aparecerão aqui.</p>
+          </div>
+        </div>
+
+        <!-- Grid de cards -->
+        <div id="studios-grid" class="studios-grid hidden"></div>
 
       </section>
 
