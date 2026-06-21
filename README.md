@@ -415,6 +415,104 @@ Coverage: 99%
 
 ---
 
+## Frontend
+
+Interface web para interagir com a API sem precisar do Swagger.
+
+### Como executar
+
+**Opção 1 — Abrir direto no navegador**
+
+Abra o arquivo `frontend-app/index.html` diretamente no navegador.
+
+> ⚠️ Alguns navegadores bloqueiam requisições `fetch` em arquivos locais (`file://`). Se os dados não carregarem, use a Opção 2.
+
+**Opção 2 — Servidor local**
+
+```bash
+cd frontend-app
+python -m http.server 5500
+```
+
+Acesse `http://localhost:5500` no navegador. A API deve estar rodando em `http://localhost:8000`.
+
+### Estrutura
+
+```
+frontend-app/
+├── index.html       # Markup único — três seções: Estúdios, Hosts, Agendamentos
+├── css/
+│   └── style.css    # Estilos da interface
+└── js/
+    ├── api.js       # Camada HTTP — fetch, headers, tratamento de erros
+    └── app.js       # Controlador da UI — estado, renderização, eventos
+```
+
+**api.js** — responsável exclusivamente pelas requisições HTTP. Expõe três objetos (`StudiosAPI`, `HostsAPI`, `BookingsAPI`), cada um com métodos semânticos (`getAll`, `create`, `update`, `remove`). Não toca no DOM.
+
+**app.js** — controla toda a interface. Mantém um estado local (`state`) com o cache das listas e registra os event listeners. Delega todas as chamadas de rede ao `api.js`.
+
+### Integração com a API
+
+A URL base está definida em `api.js`:
+
+```js
+const API_BASE_URL = 'http://localhost:8000';
+```
+
+Todas as requisições passam pela função `request()`, que centraliza headers (`Content-Type: application/json`) e trata respostas de erro, lançando um objeto `{ status, message }` que a UI captura para exibir feedback.
+
+### Fluxo de reserva
+
+1. Usuário clica em **+ Novo agendamento**
+2. Os `<select>` de estúdio e host são populados com os dados em cache (ou buscados na API se o cache estiver vazio)
+3. Usuário preenche estúdio, host, data, hora de início e hora de fim
+4. Validação client-side: todos os campos obrigatórios e `end_time > start_time`
+5. `POST /bookings` é enviado com `start_time` e `end_time` em ISO 8601
+6. Em caso de sucesso (201), o agendamento é adicionado ao estado local e a tabela é re-renderizada sem novo request
+7. Em caso de erro, o toast exibe a mensagem apropriada (ver abaixo)
+
+### Tratamento de erros
+
+A interface diferencia os erros por status HTTP e exibe mensagens específicas:
+
+| Situação | Mensagem exibida |
+|---|---|
+| 409 — conflito de horário | "Horário indisponível" |
+| 404 — host não encontrado | "Host não encontrado" |
+| 404 — estúdio não encontrado | "Estúdio não encontrado" |
+| Erro de rede / API offline | Mensagem do erro original |
+| Falha ao carregar estúdios | Estado de erro com botão "Tentar novamente" |
+
+Erros transitórios (rede, timeout) são exibidos via **toast** no canto inferior direito, com fechamento automático após 4 segundos ou manual pelo botão ×.
+
+---
+
+## Extra do Desafio
+
+Itens implementados além dos requisitos obrigatórios:
+
+**Frontend completo (`frontend-app/`)**
+- Interface web funcional que consome todos os endpoints da API
+- Seção de Estúdios com cards, barra de capacidade e tags de equipamentos
+- Seção de Hosts com tabela, formulário de criação/edição inline e exclusão com confirmação
+- Seção de Agendamentos com tabela e formulário com seleção de estúdio, host, data e horário
+- Feedback visual completo: estados de loading (skeleton), erro, lista vazia, toast de sucesso/erro e modal de confirmação
+
+**Arquitetura em camadas**
+- Separação clara entre `api.js` (HTTP) e `app.js` (UI), sem acoplamento entre as camadas
+
+**Cobertura de testes: 99%**
+- Todos os cenários de conflito de agendamento cobertos, incluindo sobreposição parcial, envolvente e adjacente
+
+**CI/CD com GitHub Actions**
+- Pipeline automático com lint (Ruff), testes e verificação de cobertura mínima em todo push/PR
+
+**Docker com healthcheck**
+- `entrypoint.sh` aguarda o Postgres ficar saudável antes de aplicar migrations e subir a API
+
+---
+
 ## CI/CD
 
 O pipeline de integração contínua roda automaticamente no GitHub Actions em todo **push** e **pull request**.
