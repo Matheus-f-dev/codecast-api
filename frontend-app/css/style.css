@@ -1,0 +1,489 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Design Tokens
+   Centraliza cores, espaçamentos e tipografia para facilitar manutenção.
+───────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Cores */
+  --color-bg:           #0f1117;
+  --color-surface:      #1a1d27;
+  --color-surface-2:    #22263a;
+  --color-border:       #2e3250;
+  --color-primary:      #6c63ff;
+  --color-primary-dark: #5a52d5;
+  --color-danger:       #e05252;
+  --color-success:      #4caf7d;
+  --color-warning:      #f0a500;
+  --color-text:         #e2e4f0;
+  --color-text-muted:   #7b80a0;
+
+  /* Tipografia */
+  --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-size-sm:   0.8125rem;
+  --font-size-base: 0.9375rem;
+  --font-size-lg:   1.125rem;
+  --font-size-xl:   1.375rem;
+
+  /* Espaçamento */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.5rem;
+  --space-6:  2rem;
+  --space-8:  3rem;
+
+  /* Bordas e sombras */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow:    0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Reset e Base
+───────────────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Utilitários
+───────────────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Header
+───────────────────────────────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  height: 60px;
+}
+
+.header__logo {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Navegação
+───────────────────────────────────────────────────────────────────────── */
+.nav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.nav__btn {
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.2s, background-color 0.2s;
+}
+
+.nav__btn:hover {
+  color: var(--color-text);
+  background-color: var(--color-surface-2);
+}
+
+.nav__btn--active {
+  color: var(--color-primary);
+  background-color: rgba(108, 99, 255, 0.12);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Main / Seções
+───────────────────────────────────────────────────────────────────────── */
+.main {
+  padding-block: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.section { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.section__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Card
+───────────────────────────────────────────────────────────────────────── */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Formulários
+───────────────────────────────────────────────────────────────────────── */
+.form-card { padding: var(--space-5); }
+
+.form-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.form-group label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-group label small {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.form-group input,
+.form-group select {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+}
+
+.form-group input::placeholder { color: var(--color-text-muted); }
+
+/* Select — remove seta padrão e adiciona custom */
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237b80a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-4) center;
+  padding-right: var(--space-8);
+}
+
+/* Input inválido após interação */
+.form-group input:not(:placeholder-shown):invalid {
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  min-height: 1.2em;
+}
+
+/* Layout de duas colunas para o form de booking */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Botões
+───────────────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.btn--primary:hover { background-color: var(--color-primary-dark); }
+
+.btn--ghost {
+  background-color: var(--color-surface-2);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.btn--ghost:hover { color: var(--color-text); }
+
+.btn--danger {
+  background-color: var(--color-danger);
+  color: #fff;
+}
+
+.btn--danger:hover { opacity: 0.85; }
+
+.btn--icon {
+  padding: var(--space-2);
+  background: none;
+  color: var(--color-text-muted);
+  border: 1px solid transparent;
+}
+
+.btn--icon:hover {
+  color: var(--color-text);
+  border-color: var(--color-border);
+  background-color: var(--color-surface-2);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Tabela
+───────────────────────────────────────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-base);
+}
+
+.table thead { border-bottom: 1px solid var(--color-border); }
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+
+.table tbody tr:hover { background-color: var(--color-surface-2); }
+
+/* Coluna de ações — alinha botões à direita */
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+}
+
+/* Tags de equipamentos */
+.tag {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border-radius: 99px;
+  background-color: rgba(108, 99, 255, 0.15);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Estados de loading e vazio
+───────────────────────────────────────────────────────────────────────── */
+.loading-state,
+.empty-state {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.loading-state::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  margin: 0 auto var(--space-3);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Toast (feedback de ações)
+───────────────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: var(--space-5);
+  right: var(--space-5);
+  z-index: 200;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  max-width: 360px;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--success { background-color: var(--color-success); color: #fff; }
+.toast--error   { background-color: var(--color-danger);  color: #fff; }
+.toast--info    { background-color: var(--color-primary); color: #fff; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Modal de confirmação
+───────────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 150;
+  backdrop-filter: blur(3px);
+}
+
+.modal {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 360px;
+  box-shadow: var(--shadow);
+  animation: modal-in 0.2s ease;
+}
+
+@keyframes modal-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.modal__message {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+  text-align: center;
+}
+
+.modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Responsividade
+───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .header__inner { height: auto; padding-block: var(--space-3); flex-wrap: wrap; }
+
+  .nav { width: 100%; justify-content: stretch; }
+  .nav__btn { flex: 1; text-align: center; font-size: var(--font-size-sm); }
+
+  .section__header { flex-direction: column; align-items: flex-start; }
+
+  /* Formulário de booking: empilha as colunas */
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Tabela: scroll horizontal em telas pequenas */
+  .card { overflow-x: auto; }
+  .table { min-width: 480px; }
+
+  .toast {
+    left: var(--space-4);
+    right: var(--space-4);
+    bottom: var(--space-4);
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container { padding-inline: var(--space-4); }
+  .form-card { padding: var(--space-4); }
+  .form-actions { flex-direction: column; }
+  .btn { justify-content: center; }
+}

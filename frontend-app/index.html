@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codecast — Agendamento de Estúdios</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+
+    <!-- ─── Cabeçalho ─────────────────────────────────────────────────────── -->
+    <header class="header">
+      <div class="container header__inner">
+        <span class="header__logo">🎙 Codecast</span>
+        <nav class="nav">
+          <button class="nav__btn nav__btn--active" data-section="studios">Estúdios</button>
+          <button class="nav__btn" data-section="hosts">Hosts</button>
+          <button class="nav__btn" data-section="bookings">Agendamentos</button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ─── Conteúdo principal ────────────────────────────────────────────── -->
+    <main class="main container">
+
+      <!-- Feedback global (loading / erro / sucesso) -->
+      <div id="toast" class="toast" aria-live="polite"></div>
+
+      <!-- ── Seção: Estúdios ─────────────────────────────────────────────── -->
+      <section id="section-studios" class="section section--active">
+
+        <div class="section__header">
+          <h1 class="section__title">Estúdios</h1>
+          <button class="btn btn--primary" id="btn-new-studio">+ Novo estúdio</button>
+        </div>
+
+        <!-- Formulário de criação/edição (oculto por padrão) -->
+        <div id="form-studio" class="card form-card hidden">
+          <h2 class="form-card__title" id="form-studio-title">Novo estúdio</h2>
+          <form id="studio-form" novalidate>
+            <div class="form-group">
+              <label for="studio-nome">Nome</label>
+              <input type="text" id="studio-nome" name="nome" placeholder="Ex: Estúdio A" required />
+              <span class="field-error" id="err-studio-nome"></span>
+            </div>
+            <div class="form-group">
+              <label for="studio-capacidade">Capacidade</label>
+              <input type="number" id="studio-capacidade" name="capacidade" min="1" placeholder="Ex: 5" required />
+              <span class="field-error" id="err-studio-capacidade"></span>
+            </div>
+            <div class="form-group">
+              <label for="studio-equipamentos">Equipamentos <small>(separados por vírgula)</small></label>
+              <input type="text" id="studio-equipamentos" name="equipamentos" placeholder="Ex: Microfone, Mesa de Som" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Salvar</button>
+              <button type="button" class="btn btn--ghost" id="btn-cancel-studio">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela de estúdios -->
+        <div class="card">
+          <div id="studios-loading" class="loading-state">Carregando...</div>
+          <div id="studios-empty" class="empty-state hidden">Nenhum estúdio cadastrado.</div>
+          <table id="studios-table" class="table hidden">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Capacidade</th>
+                <th>Equipamentos</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="studios-tbody"></tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ── Seção: Hosts ────────────────────────────────────────────────── -->
+      <section id="section-hosts" class="section hidden">
+
+        <div class="section__header">
+          <h1 class="section__title">Hosts</h1>
+          <button class="btn btn--primary" id="btn-new-host">+ Novo host</button>
+        </div>
+
+        <!-- Formulário -->
+        <div id="form-host" class="card form-card hidden">
+          <h2 class="form-card__title" id="form-host-title">Novo host</h2>
+          <form id="host-form" novalidate>
+            <div class="form-group">
+              <label for="host-nome">Nome</label>
+              <input type="text" id="host-nome" name="nome" placeholder="Ex: João Silva" required />
+              <span class="field-error" id="err-host-nome"></span>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Salvar</button>
+              <button type="button" class="btn btn--ghost" id="btn-cancel-host">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="card">
+          <div id="hosts-loading" class="loading-state">Carregando...</div>
+          <div id="hosts-empty" class="empty-state hidden">Nenhum host cadastrado.</div>
+          <table id="hosts-table" class="table hidden">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="hosts-tbody"></tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ── Seção: Agendamentos ─────────────────────────────────────────── -->
+      <section id="section-bookings" class="section hidden">
+
+        <div class="section__header">
+          <h1 class="section__title">Agendamentos</h1>
+          <button class="btn btn--primary" id="btn-new-booking">+ Novo agendamento</button>
+        </div>
+
+        <!-- Formulário -->
+        <div id="form-booking" class="card form-card hidden">
+          <h2 class="form-card__title">Novo agendamento</h2>
+          <form id="booking-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="booking-studio">Estúdio</label>
+                <select id="booking-studio" name="studio_id" required>
+                  <option value="">Selecione um estúdio</option>
+                </select>
+                <span class="field-error" id="err-booking-studio"></span>
+              </div>
+              <div class="form-group">
+                <label for="booking-host">Host</label>
+                <select id="booking-host" name="host_id" required>
+                  <option value="">Selecione um host</option>
+                </select>
+                <span class="field-error" id="err-booking-host"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="booking-start">Início</label>
+                <input type="datetime-local" id="booking-start" name="start_time" required />
+                <span class="field-error" id="err-booking-start"></span>
+              </div>
+              <div class="form-group">
+                <label for="booking-end">Término</label>
+                <input type="datetime-local" id="booking-end" name="end_time" required />
+                <span class="field-error" id="err-booking-end"></span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Agendar</button>
+              <button type="button" class="btn btn--ghost" id="btn-cancel-booking">Cancelar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela -->
+        <div class="card">
+          <div id="bookings-loading" class="loading-state">Carregando...</div>
+          <div id="bookings-empty" class="empty-state hidden">Nenhum agendamento cadastrado.</div>
+          <table id="bookings-table" class="table hidden">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Estúdio</th>
+                <th>Host</th>
+                <th>Início</th>
+                <th>Término</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ─── Modal de confirmação de exclusão ──────────────────────────────── -->
+    <div id="modal-confirm" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal">
+        <p class="modal__message">Deseja remover este item?</p>
+        <div class="modal__actions">
+          <button class="btn btn--danger" id="modal-confirm-ok">Remover</button>
+          <button class="btn btn--ghost" id="modal-confirm-cancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
