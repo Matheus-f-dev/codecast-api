@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.controllers.booking import router as booking_router
 from app.controllers.host import router as host_router
 from app.controllers.studio import router as studio_router
 from app.core.config import settings
@@ -11,6 +12,7 @@ app = FastAPI(
 
 app.include_router(studio_router)
 app.include_router(host_router)
+app.include_router(booking_router)
 
 
 @app.get("/health", tags=["health"])
