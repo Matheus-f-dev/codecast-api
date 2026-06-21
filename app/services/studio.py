@@ -1,6 +1,6 @@
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.exceptions import NotFoundError
 from app.repositories.studio import StudioRepository
 from app.schemas.studio import StudioCreate, StudioResponse, StudioUpdate
 
@@ -15,7 +15,7 @@ class StudioService:
     def get_studio(self, studio_id: int) -> StudioResponse:
         studio = self.repo.get_by_id(studio_id)
         if not studio:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Studio não encontrado")
+            raise NotFoundError("Studio não encontrado")
         return studio
 
     def create_studio(self, data: StudioCreate) -> StudioResponse:
@@ -24,11 +24,11 @@ class StudioService:
     def update_studio(self, studio_id: int, data: StudioUpdate) -> StudioResponse:
         studio = self.repo.get_by_id(studio_id)
         if not studio:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Studio não encontrado")
+            raise NotFoundError("Studio não encontrado")
         return self.repo.update(studio, data)
 
     def delete_studio(self, studio_id: int) -> None:
         studio = self.repo.get_by_id(studio_id)
         if not studio:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Studio não encontrado")
+            raise NotFoundError("Studio não encontrado")
         self.repo.delete(studio)
