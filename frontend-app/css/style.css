@@ -590,26 +590,78 @@ body {
   bottom: var(--space-5);
   right: var(--space-5);
   z-index: 200;
-  padding: var(--space-3) var(--space-5);
+  min-width: 280px;
+  max-width: 380px;
   border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: var(--font-size-base);
   box-shadow: var(--shadow);
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.3s, transform 0.3s;
+  transform: translateY(16px) scale(0.97);
+  transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
-  max-width: 360px;
+  overflow: hidden;
 }
 
 .toast--visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
-.toast--success { background-color: var(--color-success); color: #fff; }
-.toast--error   { background-color: var(--color-danger);  color: #fff; }
-.toast--info    { background-color: var(--color-primary); color: #fff; }
+.toast__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.toast__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.toast__message {
+  flex: 1;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.toast__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+
+.toast__close:hover { opacity: 1; }
+
+.toast__progress {
+  height: 3px;
+  width: 100%;
+  transform-origin: left;
+  animation: toast-progress linear forwards;
+}
+
+@keyframes toast-progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+.toast--success { background-color: #1e3a2f; border: 1px solid #2d5c45; color: #6fdb9e; }
+.toast--success .toast__progress { background-color: var(--color-success); }
+
+.toast--error   { background-color: #3a1e1e; border: 1px solid #5c2d2d; color: #f08080; }
+.toast--error   .toast__progress { background-color: var(--color-danger); }
+
+.toast--info    { background-color: #1e1e3a; border: 1px solid #2d2d5c; color: #a09cf0; }
+.toast--info    .toast__progress { background-color: var(--color-primary); }
 
 /* ─────────────────────────────────────────────────────────────────────────
    Modal de confirmação

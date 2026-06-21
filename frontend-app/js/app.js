@@ -38,12 +38,28 @@ const state = {
  * @param {string} message - Texto da mensagem
  * @param {'success'|'error'|'info'} type - Tipo visual
  */
+const TOAST_ICONS = { success: '✅', error: '❌', info: 'ℹ️' };
+const TOAST_DURATION = 4000;
+
 function showToast(message, type = 'info') {
   const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.className = `toast toast--${type} toast--visible`;
   clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('toast--visible'), 3500);
+
+  toast.className = `toast toast--${type} toast--visible`;
+  toast.innerHTML = `
+    <div class="toast__body">
+      <span class="toast__icon">${TOAST_ICONS[type] ?? TOAST_ICONS.info}</span>
+      <span class="toast__message">${message}</span>
+      <button class="toast__close" aria-label="Fechar">×</button>
+    </div>
+    <div class="toast__progress" style="animation-duration: ${TOAST_DURATION}ms"></div>
+  `;
+
+  toast.querySelector('.toast__close').addEventListener('click', () => {
+    toast.classList.remove('toast--visible');
+  });
+
+  toast._timer = setTimeout(() => toast.classList.remove('toast--visible'), TOAST_DURATION);
 }
 
 /**
@@ -456,14 +472,16 @@ function initBookingsHandlers() {
     try {
       const booking = await BookingsAPI.create(payload);
       state.bookings.push(booking);
-      showToast('Agendamento criado!', 'success');
+      showToast('Reserva criada com sucesso', 'success');
       closeBookingForm();
       renderBookings();
     } catch (err) {
-      // Conflito de horário → 409
-      const msg = err.status === 409
-        ? `Conflito de horário: ${err.message}`
-        : err.message;
+      const msg =
+        err.status === 409 ? 'Horário indisponível' :
+        err.status === 404 && /host/i.test(err.message)   ? 'Host não encontrado' :
+        err.status === 404 && /estúdio/i.test(err.message) ? 'Estúdio não encontrado' :
+        err.status === 404 ? 'Recurso não encontrado' :
+        err.message;
       showToast(msg, 'error');
     }
   });
