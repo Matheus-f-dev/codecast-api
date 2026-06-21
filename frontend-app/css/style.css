@@ -240,11 +240,15 @@ body {
   min-height: 1.2em;
 }
 
-/* Layout de duas colunas para o form de booking */
+/* Layout de colunas para formulários */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
+}
+
+.form-row--3 {
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .form-actions {
@@ -661,8 +665,9 @@ body {
 
   .section__header { flex-direction: column; align-items: flex-start; }
 
-  /* Formulário de booking: empilha as colunas */
-  .form-row { grid-template-columns: 1fr; }
+  /* Formulários: empilha as colunas */
+  .form-row,
+  .form-row--3 { grid-template-columns: 1fr; }
 
   /* Tabela: scroll horizontal em telas pequenas */
   .card { overflow-x: auto; }

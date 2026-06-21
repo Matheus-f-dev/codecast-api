@@ -89,6 +89,9 @@ const HostsAPI = {
    Bookings
 ───────────────────────────────────────────────────────────────────────── */
 const BookingsAPI = {
+  /** GET /bookings — Lista todos os agendamentos */
+  getAll: () => request('/bookings'),
+
   /** POST /bookings — Cria um novo agendamento */
   create: (payload) => request('/bookings', { method: 'POST', body: JSON.stringify(payload) }),
 };

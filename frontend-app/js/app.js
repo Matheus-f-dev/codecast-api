@@ -385,16 +385,17 @@ function populateBookingSelects() {
 async function loadBookings() {
   setTableState('bookings', 'loading');
 
-  // Garante que studios e hosts estão carregados para resolver os nomes
   try {
     if (state.studios.length === 0) state.studios = await StudiosAPI.getAll();
     if (state.hosts.length === 0)   state.hosts   = await HostsAPI.getAll();
   } catch (_) { /* ignora — nomes serão exibidos como IDs */ }
 
-  // Bookings ainda não tem endpoint GET — exibe estado vazio com aviso
-  setTableState('bookings', 'empty');
-  document.getElementById('bookings-empty').textContent =
-    'Nenhum agendamento encontrado. Crie um novo agendamento acima.';
+  try {
+    state.bookings = await BookingsAPI.getAll();
+    renderBookings();
+  } catch (err) {
+    setTableState('bookings', 'empty');
+  }
 }
 
 async function openBookingForm() {
@@ -413,32 +414,33 @@ function closeBookingForm() {
 }
 
 function getBookingFormData() {
-  const studio_id  = parseInt(document.getElementById('booking-studio').value, 10);
-  const host_id    = parseInt(document.getElementById('booking-host').value,   10);
-  const start_time = document.getElementById('booking-start').value;
-  const end_time   = document.getElementById('booking-end').value;
+  const studio_id = parseInt(document.getElementById('booking-studio').value, 10);
+  const host_id   = parseInt(document.getElementById('booking-host').value,   10);
+  const date      = document.getElementById('booking-date').value;
+  const startTime = document.getElementById('booking-start').value;
+  const endTime   = document.getElementById('booking-end').value;
 
   let valid = true;
   clearFieldErrors(document.getElementById('booking-form'));
 
   if (!studio_id) { setFieldError('err-booking-studio', 'Selecione um estúdio.'); valid = false; }
   if (!host_id)   { setFieldError('err-booking-host',   'Selecione um host.');    valid = false; }
-  if (!start_time){ setFieldError('err-booking-start',  'Informe o início.');     valid = false; }
-  if (!end_time)  { setFieldError('err-booking-end',    'Informe o término.');    valid = false; }
+  if (!date)      { setFieldError('err-booking-date',   'Informe a data.');       valid = false; }
+  if (!startTime) { setFieldError('err-booking-start',  'Informe a hora de início.'); valid = false; }
+  if (!endTime)   { setFieldError('err-booking-end',    'Informe a hora de fim.'); valid = false; }
 
-  if (valid && end_time <= start_time) {
+  if (valid && endTime <= startTime) {
     setFieldError('err-booking-end', 'O término deve ser posterior ao início.');
     valid = false;
   }
 
   if (!valid) return null;
 
-  // Converte datetime-local (sem fuso) para ISO 8601
   return {
     studio_id,
     host_id,
-    start_time: new Date(start_time).toISOString(),
-    end_time:   new Date(end_time).toISOString(),
+    start_time: new Date(`${date}T${startTime}`).toISOString(),
+    end_time:   new Date(`${date}T${endTime}`).toISOString(),
   };
 }
 

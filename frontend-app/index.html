@@ -140,15 +140,20 @@
                 <span class="field-error" id="err-booking-host"></span>
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row form-row--3">
               <div class="form-group">
-                <label for="booking-start">Início</label>
-                <input type="datetime-local" id="booking-start" name="start_time" required />
+                <label for="booking-date">Data</label>
+                <input type="date" id="booking-date" name="date" required />
+                <span class="field-error" id="err-booking-date"></span>
+              </div>
+              <div class="form-group">
+                <label for="booking-start">Hora Início</label>
+                <input type="time" id="booking-start" name="start_time" required />
                 <span class="field-error" id="err-booking-start"></span>
               </div>
               <div class="form-group">
-                <label for="booking-end">Término</label>
-                <input type="datetime-local" id="booking-end" name="end_time" required />
+                <label for="booking-end">Hora Fim</label>
+                <input type="time" id="booking-end" name="end_time" required />
                 <span class="field-error" id="err-booking-end"></span>
               </div>
             </div>
