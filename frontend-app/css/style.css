@@ -410,6 +410,16 @@ body {
   gap: var(--space-3);
 }
 
+.studio-card__actions {
+  margin-left: auto;
+  display: flex;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.studio-card:hover .studio-card__actions { opacity: 1; }
+
 .studio-card__icon {
   width: 42px;
   height: 42px;

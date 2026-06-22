@@ -12,6 +12,15 @@ def get_service(db: Session = Depends(get_db)) -> BookingService:
     return BookingService(db)
 
 
+@router.get(
+    "",
+    response_model=list[BookingResponse],
+    summary="Listar agendamentos",
+)
+def list_bookings(service: BookingService = Depends(get_service)):
+    return service.get_all_bookings()
+
+
 @router.post(
     "",
     response_model=BookingResponse,
