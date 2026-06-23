@@ -20,6 +20,9 @@ class BookingRepository:
             )
         ).first() is not None
 
+    def get_all(self) -> list[Booking]:
+        return self.db.query(Booking).all()
+
     def create(self, data: BookingCreate) -> Booking:
         booking = Booking(**data.model_dump())
         self.db.add(booking)

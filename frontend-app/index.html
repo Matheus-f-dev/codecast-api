@@ -31,10 +31,40 @@
 
         <div class="section__header">
           <h1 class="section__title">Estúdios</h1>
-          <button class="btn btn--ghost btn--sm" id="btn-refresh-studios" title="Recarregar">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            Atualizar
-          </button>
+          <div style="display:flex;gap:0.5rem">
+            <button class="btn btn--ghost btn--sm" id="btn-refresh-studios" title="Recarregar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Atualizar
+            </button>
+            <button class="btn btn--primary btn--sm" id="btn-new-studio">+ Novo estúdio</button>
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <div id="form-studio" class="card form-card hidden">
+          <h2 class="form-card__title" id="form-studio-title">Novo estúdio</h2>
+          <form id="studio-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="studio-nome">Nome</label>
+                <input type="text" id="studio-nome" name="nome" placeholder="Ex: Estúdio A" required />
+                <span class="field-error" id="err-studio-nome"></span>
+              </div>
+              <div class="form-group">
+                <label for="studio-capacidade">Capacidade</label>
+                <input type="number" id="studio-capacidade" name="capacidade" placeholder="Ex: 5" min="1" required />
+                <span class="field-error" id="err-studio-capacidade"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="studio-equipamentos">Equipamentos <small>(separados por vírgula)</small></label>
+              <input type="text" id="studio-equipamentos" name="equipamentos" placeholder="Ex: Microfone, Mesa de Som" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn--primary">Salvar</button>
+              <button type="button" class="btn btn--ghost" id="btn-cancel-studio">Cancelar</button>
+            </div>
+          </form>
         </div>
 
         <!-- Estado: carregando -->

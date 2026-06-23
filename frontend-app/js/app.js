@@ -168,6 +168,10 @@ function buildStudioCard(studio) {
     <div class="studio-card__header">
       <div class="studio-card__icon">🎧</div>
       <h2 class="studio-card__name">${studio.nome}</h2>
+      <div class="studio-card__actions">
+        <button class="btn btn--icon" data-action="edit-studio" data-id="${studio.id}" title="Editar">✏️</button>
+        <button class="btn btn--icon" data-action="delete-studio" data-id="${studio.id}" title="Remover">🗑️</button>
+      </div>
     </div>
 
     <div class="studio-card__meta">
@@ -202,7 +206,22 @@ function renderStudios() {
 
   const grid = document.getElementById('studios-grid');
   grid.innerHTML = '';
-  state.studios.forEach(studio => grid.appendChild(buildStudioCard(studio)));
+  state.studios.forEach(studio => {
+    const card = buildStudioCard(studio);
+    card.querySelector('[data-action="edit-studio"]').addEventListener('click', () => openStudioFormEdit(studio.id));
+    card.querySelector('[data-action="delete-studio"]').addEventListener('click', () => {
+      openConfirmModal(async () => {
+        try {
+          await StudiosAPI.remove(studio.id);
+          showToast('Estúdio removido.', 'success');
+          loadStudios();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+    });
+    grid.appendChild(card);
+  });
   setStudiosState('grid');
 }
 
@@ -221,11 +240,70 @@ async function loadStudios() {
 
 /** Registra os handlers da seção de estúdios. */
 function initStudiosHandlers() {
-  // Botão "Atualizar" no cabeçalho da seção
   document.getElementById('btn-refresh-studios').addEventListener('click', loadStudios);
-
-  // Botão "Tentar novamente" no estado de erro
   document.getElementById('btn-retry-studios').addEventListener('click', loadStudios);
+  document.getElementById('btn-new-studio').addEventListener('click', openStudioFormCreate);
+  document.getElementById('btn-cancel-studio').addEventListener('click', closeStudioForm);
+
+  document.getElementById('studio-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = getStudioFormData();
+    if (!payload) return;
+    try {
+      if (state.editingStudioId) {
+        await StudiosAPI.update(state.editingStudioId, payload);
+        showToast('Estúdio atualizado!', 'success');
+      } else {
+        await StudiosAPI.create(payload);
+        showToast('Estúdio criado!', 'success');
+      }
+      closeStudioForm();
+      loadStudios();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  });
+}
+
+function openStudioFormCreate() {
+  state.editingStudioId = null;
+  document.getElementById('form-studio-title').textContent = 'Novo estúdio';
+  document.getElementById('studio-form').reset();
+  clearFieldErrors(document.getElementById('studio-form'));
+  document.getElementById('form-studio').classList.remove('hidden');
+}
+
+function openStudioFormEdit(id) {
+  const studio = state.studios.find(s => s.id === id);
+  if (!studio) return;
+  state.editingStudioId = id;
+  document.getElementById('form-studio-title').textContent = 'Editar estúdio';
+  document.getElementById('studio-nome').value = studio.nome;
+  document.getElementById('studio-capacidade').value = studio.capacidade;
+  document.getElementById('studio-equipamentos').value = (studio.equipamentos || []).join(', ');
+  clearFieldErrors(document.getElementById('studio-form'));
+  document.getElementById('form-studio').classList.remove('hidden');
+}
+
+function closeStudioForm() {
+  document.getElementById('form-studio').classList.add('hidden');
+  state.editingStudioId = null;
+}
+
+function getStudioFormData() {
+  const nome = document.getElementById('studio-nome').value.trim();
+  const capacidade = parseInt(document.getElementById('studio-capacidade').value, 10);
+  const equipamentosRaw = document.getElementById('studio-equipamentos').value.trim();
+
+  clearFieldErrors(document.getElementById('studio-form'));
+  let valid = true;
+
+  if (nome.length < 2) { setFieldError('err-studio-nome', 'O nome deve ter pelo menos 2 caracteres.'); valid = false; }
+  if (!capacidade || capacidade < 1) { setFieldError('err-studio-capacidade', 'Informe uma capacidade válida.'); valid = false; }
+  if (!valid) return null;
+
+  const equipamentos = equipamentosRaw ? equipamentosRaw.split(',').map(e => e.trim()).filter(Boolean) : [];
+  return { nome, capacidade, equipamentos };
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

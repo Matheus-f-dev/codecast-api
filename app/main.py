@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.controllers.booking import router as booking_router
 from app.controllers.host import router as host_router
@@ -45,6 +46,13 @@ app = FastAPI(
 )
 
 register_error_handlers(app)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(studio_router)
 app.include_router(host_router)

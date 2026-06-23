@@ -13,6 +13,9 @@ class BookingService:
         self.studios = StudioRepository(db)
         self.hosts = HostRepository(db)
 
+    def get_all_bookings(self) -> list[BookingResponse]:
+        return self.repo.get_all()
+
     def create_booking(self, data: BookingCreate) -> BookingResponse:
         if not self.studios.get_by_id(data.studio_id):
             raise NotFoundError("Studio não encontrado")
